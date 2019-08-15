@@ -80,14 +80,37 @@ TX-LCN 主要有两个模块，Tx-Client(TC) Tx-Manager(TM). TC作为微服务�
 
 1、启动Tx-Manager(TM)服务
 
-1.1、首先到github.com下载TM项目
+1.1、TM启动需要一个数据库
+```
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`tx-manager` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `tx-manager`;
+
+/*Table structure for table `t_tx_exception` */
+
+DROP TABLE IF EXISTS `t_tx_exception`;
+
+CREATE TABLE `t_tx_exception` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `group_id` varchar(64) DEFAULT NULL,
+  `unit_id` varchar(32) DEFAULT NULL,
+  `mod_id` varchar(128) DEFAULT NULL,
+  `transaction_state` tinyint(4) DEFAULT NULL,
+  `registrar` tinyint(4) DEFAULT NULL,
+  `remark` varchar(4096) DEFAULT NULL,
+  `ex_state` tinyint(4) DEFAULT NULL COMMENT '0未解决 1已解决',
+  `create_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+1.2、首先到github.com下载TM项目
 ```
 # 下载项目
 https://github.com/codingapi/tx-lcn
 # 编译jar包
 mvn clean install -Dmaven.test.skip=true
 ```
-1.2、修改txlcn-tm配置文件内容
+1.3、修改txlcn-tm配置文件内容
 ```
 spring.application.name=TransactionManager
 server.port=7970
@@ -121,7 +144,7 @@ logging.level.com.codingapi=debug
 #redis密码
 #spring.redis.password=
 ```
-1.3、启动txlcn-tm
+1.4、启动txlcn-tm
 ```
 cd txlcn-tm
 ->Run TMApplication
